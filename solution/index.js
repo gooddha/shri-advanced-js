@@ -64,7 +64,7 @@ module.exports = class {
   }
 
   *keys() {
-    for (let i in this._unique) {
+    for (let i of this._unique) {
       yield i;
     }
   }
