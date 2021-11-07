@@ -1,4 +1,4 @@
-module.exports = class {
+class MySet {
   // реализация
   length = 0;
   unique = {};
@@ -33,6 +33,8 @@ module.exports = class {
     this.length = 0;
   }
 }
+
+module.exports = MySet;
 
 // тесты
 const set = new MySet([4, 8, 15, 15, 16, 23, 42]);
