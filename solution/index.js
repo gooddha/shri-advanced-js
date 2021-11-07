@@ -1,37 +1,70 @@
 class MySet {
   // реализация
-  length = 0;
-  unique = {};
-
   constructor(arr) {
-    console.log(arr.toString())
-
-    this.unique = arr.reduce((values, value) => {
-      if (values[value] == undefined) {
-        values[value] = value;
-        this.length++
-      }
-
-      return values;
-    }, {});
-
+    this._unique = this.filter(arr);
+    this.size = this._unique.length;
   }
 
-  get size() {
-    return this.length;
+  filter(arr) {
+    let vals = {};
+    arr.forEach(v => {
+      if (!vals[v]) {
+        vals[v] = v;
+      }
+    });
+    return Object.values(vals);
   }
 
   add(v) {
-    if (this.unique[v] == undefined) {
-      this.unique[v] = v;
-      this.length++;
+    if (!this.has(v)) {
+      this._unique.push(v)
+      this.size++;
     }
+    return this;
+  }
+
+  has(v) {
+    return this._unique.includes(v);
+  }
+
+  delete(v) {
+    console.log('DELETE------------', v);
+    let i = this._unique.indexOf(v);
+    if (i > -1) {
+      this._unique.splice(i, 1);
+      this.size--;
+    }
+
   }
 
   clear() {
-    this.unique = {};
-    this.length = 0;
+    this._unique = [];
+    this.size = 0;
   }
+
+  [Symbol.iterator]() {
+
+  }
+
+  *keys() {
+    for (let i in this._unique) {
+      yield i;
+    }
+  }
+
+  *values() {
+    for (let v of this._unique) {
+      yield v;
+    }
+  }
+
+  *entries() {
+    for (let v of this._unique) {
+      yield [v, v];
+    }
+  }
+
+
 }
 
 module.exports = MySet;
@@ -41,7 +74,7 @@ const set = new MySet([4, 8, 15, 15, 16, 23, 42]);
 // // есть свойство size
 console.log(set.size); // 6
 
-// // хранит только уникальные значения
+// хранит только уникальные значения
 // console.log([...set]); // [ 4, 8, 15, 16, 23, 42 ]
 
 
@@ -50,12 +83,12 @@ console.log(set.size); // 6
 //   console.log(item); // 4 8 15 16 23 42
 // }
 
-// // есть методы keys, values, entries
-// for (const item of set.entries()) {
-//   console.log(item); // [ 4, 4 ] [ 8, 8 ] ...
-// }
+// есть методы keys, values, entries
+for (const item of set.entries()) {
+  console.log(item); // [ 4, 4 ] [ 8, 8 ] ...
+}
 
-// // есть метод clear
+// есть метод clear
 set.clear();
 console.log(set.size); // 0
 
@@ -67,20 +100,23 @@ const data = {
   value: 42
 }
 
-// // есть метод add
+// есть метод add
 set.add(object);
-// set.add(data);
+set.add(data);
+console.log(set)
 
-// // который может работать в цепочке вызовов
-// set.add(object).add(object).add(object);
+// который может работать в цепочке вызовов
+set.add(100).add(22).add(99);
+console.log(set)
 
-// // есть метод delete
-// set.delete(data);
+// есть метод delete
+set.delete(data);
+console.log(set)
 
-// // есть метод has
-// console.log(set.has({})); // false
-// console.log(set.has(object)); // true
-// console.log(set.has(data)); // false
+// есть метод has
+console.log(set.has({})); // false
+console.log(set.has(object)); // true
+console.log(set.has(data)); // false
 
 // // и кое-что еще
 // console.log(set === set.valueOf()) // true
