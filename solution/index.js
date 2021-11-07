@@ -1,4 +1,4 @@
-class MySet {
+module.exports = class {
   // реализация
   constructor(arr) {
     this._unique = this.filter(arr);
@@ -87,7 +87,7 @@ class MySet {
 
 }
 
-module.exports = MySet;
+//  MySet;
 
 // // тесты
 // const set = new MySet([4, 8, 15, 15, 16, 23, 42]);
