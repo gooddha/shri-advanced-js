@@ -6,13 +6,17 @@ class MySet {
   }
 
   filter(arr) {
-    let vals = {};
+    let values = {};
     arr.forEach(v => {
-      if (!vals[v]) {
-        vals[v] = v;
+      if (!values[v]) {
+        values[v] = v;
       }
     });
-    return Object.values(vals);
+    return Object.values(values);
+  }
+
+  has(v) {
+    return this._unique.includes(v);
   }
 
   add(v) {
@@ -23,18 +27,12 @@ class MySet {
     return this;
   }
 
-  has(v) {
-    return this._unique.includes(v);
-  }
-
   delete(v) {
-    console.log('DELETE------------', v);
     let i = this._unique.indexOf(v);
     if (i > -1) {
-      this._unique.splice(i, 1);
+      this._unique = this._unique.slice(0, i).concat(this._unique.slice(i + 1));
       this.size--;
     }
-
   }
 
   clear() {
@@ -43,7 +41,26 @@ class MySet {
   }
 
   [Symbol.iterator]() {
+    let i = 0;
 
+    return {
+      next: () => {
+        if (i < this.size) {
+          return {
+            value: this._unique[i++],
+            done: false
+          }
+        } else {
+          return {
+            done: true
+          }
+        }
+      }
+    }
+  }
+
+  get [Symbol.toStringTag]() {
+    return '^_^'
   }
 
   *keys() {
@@ -64,66 +81,69 @@ class MySet {
     }
   }
 
+  forEach(callback, context) {
+    this._unique.forEach(callback, context);
+  }
 
 }
 
 module.exports = MySet;
 
-// тесты
-const set = new MySet([4, 8, 15, 15, 16, 23, 42]);
-// // есть свойство size
-console.log(set.size); // 6
+// // тесты
+// const set = new MySet([4, 8, 15, 15, 16, 23, 42]);
+// // // есть свойство size
+// // console.log(set.size); // 6
 
-// хранит только уникальные значения
-// console.log([...set]); // [ 4, 8, 15, 16, 23, 42 ]
+// // хранит только уникальные значения
+// // console.log([...set]); // [ 4, 8, 15, 16, 23, 42 ]
 
 
-// // работает в цикле for-of
-// for (const item of set) {
-//   console.log(item); // 4 8 15 16 23 42
+// // // работает в цикле for-of
+// // for (const item of set) {
+// //   console.log(item); // 4 8 15 16 23 42
+// // }
+
+// // есть методы keys, values, entries
+// // for (const item of set.entries()) {
+// //   console.log(item); // [ 4, 4 ] [ 8, 8 ] ...
+// // }
+
+// // есть метод clear
+// set.clear();
+// // console.log(set.size); // 0
+
+// const object = {
+//   getValue() { return this.value }
 // }
 
-// есть методы keys, values, entries
-for (const item of set.entries()) {
-  console.log(item); // [ 4, 4 ] [ 8, 8 ] ...
-}
+// const data = {
+//   value: 42
+// }
 
-// есть метод clear
-set.clear();
-console.log(set.size); // 0
+// // есть метод add
+// set.add(object);
+// set.add(data);
+// console.log(set)
 
-const object = {
-  getValue() { return this.value }
-}
+// // который может работать в цепочке вызовов
+// // set.add(100).add(22).add(99);
+// // console.log(set)
 
-const data = {
-  value: 42
-}
+// // есть метод delete
+// set.delete(data);
+// console.log(set)
 
-// есть метод add
-set.add(object);
-set.add(data);
-console.log(set)
+// // есть метод has
+// // console.log(set.has({})); // false
+// // console.log(set.has(object)); // true
+// // console.log(set.has(data)); // false
 
-// который может работать в цепочке вызовов
-set.add(100).add(22).add(99);
-console.log(set)
-
-// есть метод delete
-set.delete(data);
-console.log(set)
-
-// есть метод has
-console.log(set.has({})); // false
-console.log(set.has(object)); // true
-console.log(set.has(data)); // false
-
-// // и кое-что еще
+// // // и кое-что еще
 // console.log(set === set.valueOf()) // true
 // console.log(String(set)) // [object ^_^]
 // console.log(Object.prototype.toString.call(set)) // [object ^_^]
 
-// // есть forEach, который делает какие-то странные вещи...
+// // // есть forEach, который делает какие-то странные вещи...
 // set.forEach(function (item) {
 //   console.log(item.getValue.call(this)); // 42
 // }, data)
